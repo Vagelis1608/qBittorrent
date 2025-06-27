@@ -50,9 +50,9 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install \
+          sudo apt install -y \
             build-essential cmake ninja-build \
-            libssl-dev libxkbcommon-x11-dev libxcb-cursor-dev zlib1g-dev
+            libssl-dev libxkbcommon-x11-dev libxcb-cursor-dev zlib1g-dev crossbuild-essential-armhf
 
       - name: Setup ccache
         uses: Chocobo1/setup-ccache-action@v1
