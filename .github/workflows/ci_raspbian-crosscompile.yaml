@@ -37,6 +37,11 @@ jobs:
       libtorrent_path: "${{ github.workspace }}/../libtorrent"
 
     steps:
+      - name: Install sysroot dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y binfmt-support 
+
       - name: Prepare Sysroot
         id: pi-sysroot
         uses: mariotaku/raspbian-sysroot-action@main
