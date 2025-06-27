@@ -30,6 +30,10 @@ jobs:
       libtorrent_path: "${{ github.workspace }}/../libtorrent"
 
     steps:
+      - name: Prepare Sysroot
+        id: pi-sysroot
+        uses: mariotaku/raspbian-sysroot-action@main
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
