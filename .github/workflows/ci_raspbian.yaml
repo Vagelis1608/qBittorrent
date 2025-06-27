@@ -23,6 +23,7 @@ jobs:
         libt_version: ["2.0.11", "1.2.20"]
         qbt_gui: ["GUI=OFF"]
         qt_version: ["6.6.3"]
+        appimage_arch: ["armhf"]
 
     env:
       boost_path: "${{ github.workspace }}/../boost"
@@ -149,13 +150,13 @@ jobs:
           curl \
             -L \
             -Z \
-            -O https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage \
-            -O https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage \
-            -O https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
+            -O https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-${{ matrix.appimage_arch }}.AppImage \
+            -O https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-${{ matrix.appimage_arch }}.AppImage \
+            -O https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-${{ matrix.appimage_arch }}.AppImage
           chmod +x \
-            linuxdeploy-x86_64.AppImage \
-            linuxdeploy-plugin-qt-x86_64.AppImage \
-            linuxdeploy-plugin-appimage-x86_64.AppImage
+            linuxdeploy-${{ matrix.appimage_arch }}.AppImage \
+            linuxdeploy-plugin-qt-${{ matrix.appimage_arch }}.AppImage \
+            linuxdeploy-plugin-appimage-${{ matrix.appimage_arch }}.AppImage
 
       - name: Prepare files for AppImage
         if: matrix.qbt_gui == 'GUI=OFF'
@@ -168,15 +169,15 @@ jobs:
       - name: Package AppImage
         run: |
           rm -f "${{ runner.workspace }}/Qt/${{ matrix.qt_version }}/gcc_64/plugins/sqldrivers/libqsqlmimer.so"
-          ./linuxdeploy-x86_64.AppImage --appdir qbittorrent --plugin qt
+          ./linuxdeploy-${{ matrix.appimage_arch }}.AppImage --appdir qbittorrent --plugin qt
           rm qbittorrent/apprun-hooks/*
           cp .github/workflows/helper/appimage/export_vars.sh qbittorrent/apprun-hooks/export_vars.sh
           NO_APPSTREAM=1 \
-            OUTPUT=upload/qbittorrent-CI_Ubuntu_x86_64.AppImage \
-            ./linuxdeploy-x86_64.AppImage --appdir qbittorrent --output appimage
+            OUTPUT=upload/qbittorrent-CI_Ubuntu_${{ matrix.appimage_arch }}.AppImage \
+            ./linuxdeploy-${{ matrix.appimage_arch }}.AppImage --appdir qbittorrent --output appimage
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: qBittorrent-CI_Ubuntu-x64_${{ matrix.qbt_gui }}_libtorrent-${{ matrix.libt_version }}_Qt-${{ matrix.qt_version }}
+          name: qBittorrent-CI_bookworm_x86_${{ matrix.qbt_gui }}_libtorrent-${{ matrix.libt_version }}_Qt-${{ matrix.qt_version }}
           path: upload
