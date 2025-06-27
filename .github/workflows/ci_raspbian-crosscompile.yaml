@@ -1,4 +1,4 @@
-name: CI - Raspbian
+name: CI - Raspbian Cross Compile
 
 on:
   workflow_call: 
