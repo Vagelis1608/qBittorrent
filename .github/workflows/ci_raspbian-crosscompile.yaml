@@ -1,7 +1,7 @@
 name: CI - Raspbian Cross Compile
 
 on:
-  workflow_call: 
+  workflow_dispatch: 
     inputs: 
       checkout_ref:
         description: "Use specific Tag, etc, for git checkout (default: release-5.1.1)"
