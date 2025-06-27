@@ -2,6 +2,12 @@ name: CI - Raspbian
 
 on:
   workflow_call: 
+    inputs: 
+      checkout_ref:
+        description: "Use specific Tag, etc, for git checkout (default: release-5.1.1)"
+        required: false
+        type: string
+        default: release-5.1.1
 
 permissions: {}
 
@@ -39,6 +45,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+          ref: ${{ inputs.checkout_ref }}
 
       - name: Install dependencies
         run: |
