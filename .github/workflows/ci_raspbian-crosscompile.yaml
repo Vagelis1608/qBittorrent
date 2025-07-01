@@ -164,16 +164,8 @@ jobs:
 
       - name: Install AppImage
         run: |
-          curl \
-            -L \
-            -Z \
-            -O https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-${{ matrix.appimage_arch }}.AppImage \
-            -O https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-${{ matrix.appimage_arch }}.AppImage \
-            -O https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-${{ matrix.appimage_arch }}.AppImage
-          chmod +x \
-            linuxdeploy-${{ matrix.appimage_arch }}.AppImage \
-            linuxdeploy-plugin-qt-${{ matrix.appimage_arch }}.AppImage \
-            linuxdeploy-plugin-appimage-${{ matrix.appimage_arch }}.AppImage
+          wget -c https://github.com/$(wget -q https://github.com/probonopd/go-appimage/releases/expanded_assets/continuous -O - | grep "appimagetool-.*-${{ matrix.appimage_arch }}.AppImage" | head -n 1 | cut -d '"' -f 2)
+          chmod +x appimagetool-*.AppImage
 
       - name: Prepare files for AppImage
         if: matrix.qbt_gui == 'GUI=OFF'
@@ -185,16 +177,13 @@ jobs:
 
       - name: Package AppImage
         run: |
-          rm -f "${{ runner.workspace }}/Qt/${{ matrix.qt_version }}/gcc/plugins/sqldrivers/libqsqlmimer.so"
-          ./linuxdeploy-${{ matrix.appimage_arch }}.AppImage --appdir qbittorrent --plugin qt
+          ./appimagetool-*.AppImage -s deploy qbittorent/usr/share/applications/*.desktop
           rm qbittorrent/apprun-hooks/*
           cp .github/workflows/helper/appimage/export_vars.sh qbittorrent/apprun-hooks/export_vars.sh
-          NO_APPSTREAM=1 \
-            OUTPUT=upload/qbittorrent-CI_Ubuntu_${{ matrix.appimage_arch }}.AppImage \
-            ./linuxdeploy-${{ matrix.appimage_arch }}.AppImage --appdir qbittorrent --output appimage
+          ./appimagetool-*.AppImage ./qbittorrent
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: qBittorrent-CI_bookworm_x86_${{ matrix.qbt_gui }}_libtorrent-${{ matrix.libt_version }}_Qt-${{ matrix.qt_version }}
+          name: qBittorrent-CI_bookworm_${{ matrix.appimage_arch }}_${{ matrix.qbt_gui }}_libtorrent-${{ matrix.libt_version }}_Qt-${{ matrix.qt_version }}
           path: upload
