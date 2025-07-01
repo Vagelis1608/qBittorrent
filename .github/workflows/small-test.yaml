@@ -1,0 +1,32 @@
+name: Small Github Actions test
+
+permissions:
+  contents: write
+  actions: write
+
+on:
+    workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install sysroot dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y binfmt-support 
+
+      - name: Prepare Sysroot
+        id: pi-sysroot
+        uses: mariotaku/raspbian-sysroot-action@main
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - id: testing
+        run: |
+          env
+          echo '\n'
+          ls -al 
+          echo '\n'
+          echo ${PWD}
