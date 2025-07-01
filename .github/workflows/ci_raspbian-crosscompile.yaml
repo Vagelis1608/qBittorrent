@@ -45,6 +45,9 @@ jobs:
       - name: Prepare Sysroot
         id: pi-sysroot
         uses: mariotaku/raspbian-sysroot-action@main
+        with:
+          packages: |
+            qtbase5-dev
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -112,7 +115,8 @@ jobs:
             -DCMAKE_CXX_STANDARD=20 \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DBOOST_ROOT="${{ env.boost_path }}/lib/cmake" \
-            -Ddeprecated-functions=OFF
+            -Ddeprecated-functions=OFF \
+            -DCMAKE_TOOLCHAIN_FILE=${{steps.pi-sysroot.outputs.cmake-toolchain}}
           cmake --build build
           sudo cmake --install build
 
@@ -137,7 +141,8 @@ jobs:
             -DCMAKE_INSTALL_PREFIX="/usr" \
             -DTESTING=ON \
             -DVERBOSE_CONFIGURE=ON \
-            -D${{ matrix.qbt_gui }}
+            -D${{ matrix.qbt_gui }} \
+            -DCMAKE_TOOLCHAIN_FILE=${{steps.pi-sysroot.outputs.cmake-toolchain}}
           cmake --build build --target qbt_update_translations
           cmake --build build
           cmake --build build --target check
